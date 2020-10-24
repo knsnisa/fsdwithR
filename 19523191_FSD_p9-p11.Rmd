@@ -1,0 +1,113 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+---
+title: "FSD P9-11" "mental health in technology"
+output: html_notebook
+---
+
+```{r}
+finansial <- read.csv("/Users/Asus/Documents/R/udemy_output_All_Finance__Accounting_p1_p626.csv")
+finansial
+str(finansial)
+
+```
+
+
+
+```{r}
+#Simple Linear Regression
+new_dt <- subset(finansial, select = c(num_published_lectures, num_reviews))
+new_dt
+```
+```{r}
+camy <- lm(num_published_lectures ~ num_reviews, data = finansial)
+camy
+summary(camy)
+```
+
+
+```{r}
+library(predict3d)
+ggPredict(camy)
+```
+```{r}
+ggPredict(camy, xpos = 0.75, vjust = 1.5, show.error = TRUE)
+```
+
+```{r}
+#Multiple
+library(rgl)
+finansial$discount_price__amount=ifelse(finansial$num_published_lectures<=300,"455","500")
+camy <- lm(num_published_lectures ~ num_reviews + discount_price__amount, data = finansial)
+summary(camy)
+```
+```{r}
+ggPredict(camy)
+```
+```{r}
+ggPredict(camy, show.error = TRUE, facet.modx = TRUE, show.text = FALSE)
+
+```
+#Logistic Regression
+```{r}
+#Simple Logistic Regression
+dt <- subset(finansial, select = c(rating, num_published_lectures, num_reviews))
+dt
+```
+```{r}
+my <- glm(formula = rating~num_reviews, data = finansial)
+summary(my)
+```
+
+
+```{r}
+require(ggplot2)
+ggplot(my, aes(x=rating, y=num_reviews)) + geom_point() +
+  stat_smooth(method = "glm", method.args = list(), se = FALSE)
+```
+
+#Naive Bayes
+```{r}
+install.packages("e1071", repos = "https://cran.rstudio.com")
+
+```
+
+```{r}
+library(naivebayes)
+library(e1071)
+```
+
+```{r}
+nb_model = naiveBayes(discount_price__amount ~., data=finansial)
+nb_model
+```
+
+```{r}
+#input data baru
+newData <- data.frame(num_published_lectures = "85", num_reviews = "79906", rating = "5.234", discount_price__amount="")
+newData
+```
+```{r}
+prediksiVektor = predict(nb_model, newData, type = "raw")
+vp = prediksiVektor
+vp
+```
+
+```{r}
+diskon = colnames(vp)[max.col(vp,ties.method="first")]
+sprintf("ini adalah data baru dari Diskon'",diskon)
+newData$discount_price__amount <- diskon
+newData
+```
+```{r}
+plot(prediksiVektor)
+```
+
+
+
+
