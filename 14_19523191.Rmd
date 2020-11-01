@@ -1,0 +1,53 @@
+---
+title: "Tugas FSD pertemuan 14"
+output: html_notebook
+---
+
+
+```{r}
+datasetsaya <- read.csv(file="hsbdemo2.txt", header = TRUE)
+datasetsaya[1:5]
+```
+```{r}
+#biar tau ada berapa baris datasetnya
+nrow(datasetsaya)
+```
+```{r}
+x <-  matrix(rnorm(40), 20, 2)
+x
+```
+```{r}
+y <- factor(rep(c(-1, 1), c(10, 10)))
+y
+```
+```{r}
+x[y == 1, ] <- x[y == 1, ] + 3
+x
+```
+```{r}
+#menggabungkan variabel ke dalam data frame
+myData <- data.frame(x,y)
+head(myData)
+```
+```{r}
+#ngasih nama
+colnames(myData) <- c("Rating_Penonton_NonLive", "Rating_Penonton_Live", "Rating_Stasiun_Cnet")
+head(myData)
+```
+```{r}
+plot(myData$Rating_Penonton_NonLive,myData$Rating_Penonton_Live, col = ifelse(y=="1", "blue", "red"), pch = 19)
+```
+```{r}
+library(e1071)
+```
+
+```{r}
+modelSVM1 <- svm(Rating_Stasiun_Cnet ~ ., data = myData, kernel = "linear")
+print(modelSVM1)
+```
+```{r}
+plot(modelSVM1, myData)
+```
+
+
+
