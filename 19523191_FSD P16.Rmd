@@ -1,0 +1,66 @@
+---
+title: "16 - K-means - 19523191"
+output: html_notebook
+---
+
+```{r}
+wholesale <- read.csv("/Users/Asus/Downloads/Wholesale customers data.csv")
+wholesale
+```
+```{r}
+summary(wholesale)
+```
+```{r}
+#kita klastering dengan 6 variabel pertama dari region ke delicassen
+wholesale.new <- wholesale[, 1:6]
+wholesale.class <- wholesale[, "Delicassen"]
+set.seed(1356)
+#mencari 5 cluster dari data set wholesale
+result <- kmeans(wholesale.new, 5) 
+```
+
+```{r}
+#parameter mfrow=c(2,4) membagi ruang plot menjadi 2 baris dan 4 kolom, yang artinya ada 4 plot yang mungkin untuk ditampilkan bersama. 
+
+#Adapun parameter mar=c(5,4,2,2) mengatur ukuran margin dari plot.
+
+par(mfrow=c(2,2), mar=c(5,4,2,2))
+plot(wholesale.new[, c(2,3)], col=result$cluster)
+plot(wholesale.new[, c(2,3)], col=wholesale.class)
+plot(wholesale.new[, c(3,4)], col=result$cluster)
+plot(wholesale.new[, c(3,4)], col=wholesale.class)
+```
+```{r}
+#mengetahui distortion function nya
+result$tot.withinss
+
+```
+```{r}
+#melihat nilai apa aja yang dibalikin sama fungsi kmean
+attributes(result)$names
+
+```
+```{r}
+#visualisasi ggplot2
+wholesale.new$cluster <- factor(result$cluster)
+centers <- as.data.frame(result$centers)
+library(ggplot2)
+ggplot() + 
+  geom_point(data=wholesale.new, aes(x=Region, y=Fresh,color=cluster))  +
+  geom_point(data=centers, aes(x=Region, y=Fresh, color="Center"), 
+             size=52, alpha=.3, show.legend = FALSE)
+```
+```{r}
+#simulasi dataset dalam bentuk matriks
+set.seed (2)
+x <- matrix (rnorm (100*2) , ncol =2)
+x[1:50 ,1] <- x[1:50 ,1] + 3
+x[1:50 ,2]<- x[1:50 ,2] - 4
+plot(x)
+```
+```{r}
+#mencari klaster dari matriks diatas
+kmenas <- kmeans(x, 2)
+plot(x, col = (kmenas$cluster +1))
+```
+
